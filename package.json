@@ -24,7 +24,7 @@
     "predeploy": "npm run build",
     "deploy": "npx gh-pages -d build"
   },
-  "homepage": "https://avtnmv.github.io/logistics-app",
+  "homepage": "https://avtnmv.github.io/logistics-react",
   "eslintConfig": {
     "extends": [
       "react-app",

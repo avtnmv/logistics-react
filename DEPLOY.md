@@ -33,7 +33,7 @@ npm run deploy
 ```
 
 **Ваш сайт будет доступен по адресу:**
-`https://avtnmv.github.io/logistics-app:`
+`https://avtnmv.github.io/logistics-react`
 
 ## Что происходит при деплое:
 1. `npm run deploy` автоматически:
