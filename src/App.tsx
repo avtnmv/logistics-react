@@ -8,8 +8,10 @@ import Dashboard from './components/Dashboard';
 import './App.css';
 
 function App() {
+  const basename = process.env.NODE_ENV === 'production' ? '/logistics-react' : undefined;
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <div className="App">
         <AnimatePresence mode="wait">
           <Routes>

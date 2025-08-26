@@ -18,15 +18,13 @@ const AvailableCodes: React.FC<AvailableCodesProps> = ({
   React.useEffect(() => {
     if (showInConsole) {
       console.log('');
-      console.log('==================================================');
       console.log('                ' + title.toUpperCase());
-      console.log('==================================================');
       console.log('');
       Object.entries(codes).forEach(([phone, code]) => {
         console.log(`📱 ${phone} → код: ${code}`);
       });
       console.log('');
-      console.log('💡 Используйте эти данные для тестирования');
+      console.log('Данные');
       console.log('');
     }
   }, [codes, title, showInConsole]);

@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
         <div className="footer__container">
           <div className="footer__info">
             <Link to="/" className="logo footer__logo">
-              <img src="/img/logo.webp" alt="logo" className="footer__logo-img" width="180" height="62" />
+              <img src={`${process.env.PUBLIC_URL}/img/logo.webp`} alt="logo" className="footer__logo-img" width="180" height="62" />
             </Link>
 
             <ul className="footer__list">

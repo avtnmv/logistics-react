@@ -1,13 +1,13 @@
-// Централизованные тестовые данные для всех компонентов
-
 export interface TestPhoneData {
-  [phone: string]: string; // номер телефона → код
+  [phone: string]: string; 
 }
 
 export interface UserData {
   phone: string;
   password: string;
   isRegistered: boolean;
+  firstName?: string;  
+  lastName?: string;   
 }
 
 export interface TestDB {
@@ -17,40 +17,74 @@ export interface TestDB {
   attempts: { [phone: string]: number };
 }
 
-// Основные тестовые данные
 export const TEST_PHONES: TestPhoneData = {
   '+998901234567': '1234',
   '+998901234568': '5678',
   '+998901234569': '9999',
-  '+380635032027': '2027' // Украинский номер
+  '+380635032027': '2027' 
+};
+
+const STORAGE_KEY = 'logistics_app_users';
+
+const DEFAULT_USERS: { [phone: string]: UserData } = {
+  '+998901234567': {
+    phone: '+998901234567',
+    password: 'Test123!',
+    isRegistered: true
+  },
+  '+998901234568': {
+    phone: '+998901234568',
+    password: 'Test456!',
+    isRegistered: true
+  },
+  '+998901234569': {
+    phone: '+998901234569',
+    password: 'Test789!',
+    isRegistered: true
+  },
+  '+380635032027': {
+    phone: '+380635032027',
+    password: 'Ukraine2027!',
+    isRegistered: true
+  }
+};
+
+// Функция для загрузки пользователей из localStorage
+const loadUsersFromStorage = (): { [phone: string]: UserData } => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      console.log('📱 Загружены данные пользователей из localStorage:', Object.keys(parsed));
+      return { ...DEFAULT_USERS, ...parsed }; // Объединяем с предустановленными
+    }
+  } catch (error) {
+    console.warn('⚠️ Ошибка загрузки данных из localStorage:', error);
+  }
+  return DEFAULT_USERS;
+};
+
+// Функция для сохранения пользователей в localStorage
+export const saveUsersToStorage = (users: { [phone: string]: UserData }): void => {
+  try {
+    // Сохраняем только новых пользователей (не предустановленных)
+    const customUsers: { [phone: string]: UserData } = {};
+    Object.entries(users).forEach(([phone, userData]) => {
+      if (!DEFAULT_USERS[phone]) {
+        customUsers[phone] = userData;
+      }
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(customUsers));
+    console.log('💾 Данные пользователей сохранены в localStorage:', Object.keys(customUsers));
+  } catch (error) {
+    console.warn('⚠️ Ошибка сохранения данных в localStorage:', error);
+  }
 };
 
 // Глобальная база данных для всех компонентов
 let globalTestDB: TestDB = {
   codes: { ...TEST_PHONES },
-  users: {
-    // Предустановленные тестовые пользователи
-    '+998901234567': {
-      phone: '+998901234567',
-      password: 'Test123!',
-      isRegistered: true
-    },
-    '+998901234568': {
-      phone: '+998901234568',
-      password: 'Test456!',
-      isRegistered: true
-    },
-    '+998901234569': {
-      phone: '+998901234569',
-      password: 'Test789!',
-      isRegistered: true
-    },
-    '+380635032027': {
-      phone: '+380635032027',
-      password: 'Ukraine2027!',
-      isRegistered: true
-    }
-  },
+  users: loadUsersFromStorage(),
   lastRequestTime: {},
   attempts: {}
 };
@@ -65,33 +99,24 @@ export const getGlobalTestDB = (): TestDB => {
   return globalTestDB;
 };
 
+// Функция для очистки localStorage
+export const clearStoredUsers = (): void => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    console.log('🗑️ Пользовательские данные удалены из localStorage');
+  } catch (error) {
+    console.warn('⚠️ Ошибка очистки localStorage:', error);
+  }
+};
+
 // Функция для сброса базы данных к исходному состоянию
 export const resetTestDB = (): void => {
+  // Очищаем localStorage
+  clearStoredUsers();
+  
   globalTestDB = {
     codes: { ...TEST_PHONES },
-    users: {
-      // Предустановленные тестовые пользователи
-      '+998901234567': {
-        phone: '+998901234567',
-        password: 'Test123!',
-        isRegistered: true
-      },
-      '+998901234568': {
-        phone: '+998901234568',
-        password: 'Test456!',
-        isRegistered: true
-      },
-      '+998901234569': {
-        phone: '+998901234569',
-        password: 'Test789!',
-        isRegistered: true
-      },
-      '+380635032027': {
-        phone: '+380635032027',
-        password: 'Ukraine2027!',
-        isRegistered: true
-      }
-    },
+    users: { ...DEFAULT_USERS }, // Используем константу
     lastRequestTime: {},
     attempts: {}
   };
@@ -120,20 +145,26 @@ export const verifyUserPassword = (phone: string, password: string, db: TestDB):
 };
 
 // Функция для регистрации нового пользователя
-export const registerUser = (phone: string, password: string, db: TestDB): void => {
+export const registerUser = (phone: string, password: string, db: TestDB, firstName?: string, lastName?: string): void => {
   db.users[phone] = {
     phone,
     password,
-    isRegistered: true
+    isRegistered: true,
+    firstName,
+    lastName
   };
-  console.log(`✅ Пользователь ${phone} успешно зарегистрирован`);
+  // Сохраняем в localStorage
+  saveUsersToStorage(db.users);
+  console.log(`✅ Пользователь ${phone} (${firstName} ${lastName}) успешно зарегистрирован и сохранен в localStorage`);
 };
 
 // Функция для изменения пароля пользователя
 export const updateUserPassword = (phone: string, newPassword: string, db: TestDB): void => {
   if (db.users[phone]) {
     db.users[phone].password = newPassword;
-    console.log(`✅ Пароль для ${phone} успешно изменен`);
+    // Сохраняем в localStorage
+    saveUsersToStorage(db.users);
+    console.log(`✅ Пароль для ${phone} успешно изменен и сохранен в localStorage`);
   }
 };
 

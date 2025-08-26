@@ -147,10 +147,9 @@
   color: var(--color-primary);
 }
 
-.password-toggle .eye-icon,
-.password-toggle .eye-off-icon {
+.password-toggle svg {
   width: 20px;
-  height: 20px;
+  height: auto;
 }
 
 /* ===== СТИЛИ ДЛЯ СООБЩЕНИЙ ===== */

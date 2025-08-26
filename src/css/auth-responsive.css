@@ -1,0 +1,222 @@
+/* ===== МЕДИА-ЗАПРОСЫ ДЛЯ ФОРМ АВТОРИЗАЦИИ ===== */
+
+/* ===== ПЛАНШЕТЫ (≤768px) ===== */
+@media (max-width: 768px) {
+    /* ===== HEADER И НАВИГАЦИЯ ===== */
+    .header__nav--desktop {
+        display: none; /* Скрываем десктопную навигацию */
+    }
+    
+    .burger-menu {
+        display: flex; /* Показываем бургер меню */
+    }
+    
+    .header__logo-img {
+        width: 140px; /* Уменьшаем логотип */
+        height: 48px;
+    }
+    
+    /* ===== МОБИЛЬНОЕ МЕНЮ ===== */
+    .mobile-menu__item {
+        padding: 20px 24px; /* Увеличиваем отступы для удобства */
+        font-size: 18px; /* Увеличиваем размер шрифта */
+    }
+    
+    .mobile-menu__item-icon {
+        width: 28px; /* Увеличиваем иконки */
+        height: 28px;
+    }
+    
+    /* ===== ФОРМЫ АВТОРИЗАЦИИ ===== */
+    .form-container svg[width="548"] {
+        width: 100%;
+        max-width: 400px; /* Ограничиваем максимальную ширину SVG */
+        height: auto; /* Автоматическая высота для сохранения пропорций */
+    }
+    
+    .form-container__title {
+        font-size: 24px; /* Заголовки 24px на планшетах */
+    }
+    
+    .form-container__description {
+        font-size: 16px; /* Описания 16px на планшетах */
+    }
+    
+    /* ===== ПЕРЕКЛЮЧАТЕЛЬ ПАРОЛЯ ===== */
+    .password-toggle {
+        right: 10px; /* Уменьшаем отступ справа */
+        padding: 3px; /* Уменьшаем внутренние отступы */
+    }
+}
+
+/* ===== МОБИЛЬНЫЕ ТЕЛЕФОНЫ (≤480px) ===== */
+@media (max-width: 480px) {
+    /* ===== HEADER ===== */
+    .header {
+        padding: 12px 16px; /* Уменьшаем отступы header */
+        margin-bottom: 32px; /* Уменьшаем отступ снизу */
+    }
+    
+    .header__logo-img {
+        width: 120px; /* Еще больше уменьшаем логотип */
+        height: 42px;
+    }
+    
+    /* ===== МОБИЛЬНОЕ МЕНЮ ===== */
+    .header__nav--mobile {
+        width: 100vw; /* Меню на весь экран */
+        right: 0;
+    }
+    
+    .mobile-menu__header {
+        padding: 12px 20px; /* Уменьшаем отступы header меню */
+        min-height: 66px; /* Уменьшаем минимальную высоту */
+    }
+    
+    .mobile-menu__logo-img {
+        width: 120px; /* Уменьшаем логотип в мобильном меню */
+        height: 42px;
+    }
+    
+    .mobile-menu__content {
+        padding: 20px 0; /* Уменьшаем отступы контента */
+    }
+    
+    .mobile-menu__item {
+        padding: 18px 20px; /* Уменьшаем отступы элементов */
+        font-size: 16px; /* Возвращаем стандартный размер шрифта */
+    }
+    
+    /* ===== ФОРМЫ АВТОРИЗАЦИИ ===== */
+    .form-container svg[width="548"] {
+        width: 100%;
+        max-width: 345px; /* Ограничиваем ширину SVG для телефонов */
+        height: 44px; /* Фиксированная высота */
+        margin-bottom: 24px !important; /* Принудительный отступ снизу */
+    }
+    
+    .form-container__title {
+        font-size: 24px; /* Заголовки остаются 24px */
+        margin-bottom: 8px; /* Уменьшаем отступ снизу */
+    }
+    
+    .form-container__description {
+        font-size: 16px; /* Описания остаются 16px */
+        margin-bottom: 24px; /* Уменьшаем отступ снизу */
+    }
+    
+    /* ===== ЗЕЛЕНАЯ ГАЛОЧКА НА ЭКРАНЕ УСПЕХА ===== */
+    .form-container svg[width="50"] {
+        width: 40px; /* Уменьшаем галочку */
+        height: 40px;
+        margin-top: 16px !important; /* Принудительный отступ сверху */
+    }
+    
+    /* ===== ПЕРЕКЛЮЧАТЕЛЬ ПАРОЛЯ ===== */
+    .password-toggle {
+        right: 8px; /* Еще больше уменьшаем отступ справа */
+        padding: 2px; /* Минимальные внутренние отступы */
+    }
+    
+    /* ===== СООБЩЕНИЯ ФОРМ ===== */
+    .form-message {
+        margin: 0 auto 16px; /* Уменьшаем отступ снизу */
+        padding: 8px 12px; /* Уменьшаем внутренние отступы */
+        font-size: 12px; /* Уменьшаем размер шрифта */
+        max-width: 100%; /* Максимальная ширина на всю доступную область */
+    }
+}
+
+/* ===== ОЧЕНЬ МАЛЕНЬКИЕ ЭКРАНЫ (≤360px) ===== */
+@media (max-width: 360px) {
+    /* ===== ФОРМЫ АВТОРИЗАЦИИ ===== */
+    .form-container svg[width="548"] {
+        max-width: 280px; /* Еще больше ограничиваем ширину SVG */
+    }
+    
+    .form-container__title {
+        font-size: 22px; /* Немного уменьшаем заголовки */
+    }
+    
+    .form-container__description {
+        font-size: 15px; /* Немного уменьшаем описания */
+    }
+    
+    /* ===== МОБИЛЬНОЕ МЕНЮ ===== */
+    .mobile-menu__item {
+        padding: 16px 16px; /* Минимальные отступы */
+        font-size: 15px; /* Минимальный размер шрифта */
+    }
+    
+    .mobile-menu__header {
+        padding: 10px 16px; /* Минимальные отступы header */
+    }
+}
+
+/* ===== ЛАНДШАФТНАЯ ОРИЕНТАЦИЯ МОБИЛЬНЫХ ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+    /* ===== МОБИЛЬНОЕ МЕНЮ ===== */
+    .mobile-menu__header {
+        padding: 8px 20px;
+    }
+    
+    .mobile-menu__content {
+        padding: 16px 0; /* Уменьшаем отступы контента */
+    }
+    
+    .mobile-menu__item {
+        padding: 14px 24px; /* Уменьшаем отступы элементов */
+    }
+    
+
+}
+
+/* ===== ВЫСОКОЧАСТОТНЫЕ ЭКРАНЫ (Retina) ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* ===== SVG ЭЛЕМЕНТЫ ===== */
+    .form-container svg[width="548"],
+    .form-container svg[width="50"] {
+        image-rendering: -webkit-optimize-contrast; /* Оптимизация для Retina */
+        image-rendering: crisp-edges;
+    }
+}
+
+/* ===== ТЕМНАЯ ТЕМА (если поддерживается) ===== */
+@media (prefers-color-scheme: dark) {
+    /* ===== ФОРМЫ ===== */
+    .form-container {
+        background-color: var(--color-dark, #152736);
+        color: var(--color-white, #ffffff);
+    }
+    
+    .form__input {
+        background-color: var(--color-dark, #152736);
+        color: var(--color-white, #ffffff);
+        border-color: var(--color-border, #2a3f54);
+    }
+}
+
+/* ===== УВЕЛИЧЕНИЕ ТЕКСТА (доступность) ===== */
+@media (prefers-reduced-motion: no-preference) {
+    /* ===== АНИМАЦИИ ===== */
+    .form-container svg[width="548"],
+    .form-container svg[width="50"] {
+        transition: all 0.3s ease; /* Плавные переходы для SVG */
+    }
+}
+
+/* ===== ПЕЧАТЬ ===== */
+@media print {
+    /* ===== СКРЫВАЕМ НЕПОТРЕБНЫЕ ЭЛЕМЕНТЫ ===== */
+    .burger-menu,
+    .mobile-menu-backdrop,
+    .header__nav--mobile {
+        display: none !important;
+    }
+    
+    /* ===== ФОРМЫ ===== */
+    .form-container {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}
