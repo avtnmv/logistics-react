@@ -7,6 +7,7 @@ import FormMessage from './FormMessage';
 import PasswordToggle from './PasswordToggle';
 import { getGlobalTestDB, logTestData, isUserRegistered, registerUser, saveUsersToStorage } from '../data/testData';
 import { usePasswordToggle } from '../hooks/usePasswordToggle';
+import { verificationService } from '../services/verificationService';
 
 const Registration: React.FC = () => {
   const navigate = useNavigate();
@@ -61,33 +62,41 @@ const Registration: React.FC = () => {
       return;
     }
 
-    // Генерируем код для номера
-    const code = Math.floor(1000 + Math.random() * 9000).toString();
-    
     // Проверяем, не зарегистрирован ли уже пользователь
     if (isUserRegistered(phone, testDB)) {
       showFormMessage('Пользователь с этим номером уже зарегистрирован', 'info');
-    } else {
-      // Регистрируем пользователя с временным паролем
-      const tempPassword = 'Temp' + Math.random().toString(36).substring(2, 8) + '!';
-      registerUser(phone, tempPassword, testDB);
+      return;
+    }
+
+    try {
+      // Показываем сообщение о загрузке
+      showFormMessage('Отправляем код...', 'info');
       
-      // Добавляем номер в базу кодов
-      testDB.codes[phone] = code;
+      // Отправляем код через сервис верификации
+      const result = await verificationService.sendCode({ phone });
       
-      showFormMessage('Код отправлен на ваш номер телефона', 'success');
-      setCurrentStep('code');
-      setCountdown(30);
-      
-      // Логируем код в консоль
-      console.log('');
-      console.log('==================================================');
-      console.log('                КОД ДЛЯ РЕГИСТРАЦИИ: ' + code);
-      console.log('==================================================');
-      console.log('');
-      console.log('Номер телефона: ' + phone);
-      console.log('Введите этот код для подтверждения: ' + code);
-      console.log('');
+      if (result.success) {
+        showFormMessage(result.message, 'success');
+        setCurrentStep('code');
+        setCountdown(30);
+        
+        // Логируем код в консоль для тестирования
+        if (result.code) {
+          console.log('');
+          console.log('==================================================');
+          console.log('                КОД ДЛЯ РЕГИСТРАЦИИ: ' + result.code);
+          console.log('==================================================');
+          console.log('');
+          console.log('Номер телефона: ' + phone);
+          console.log('Введите этот код для подтверждения: ' + result.code);
+          console.log('');
+        }
+      } else {
+        showFormMessage(result.message, 'error');
+      }
+    } catch (error) {
+      console.error('Ошибка отправки кода:', error);
+      showFormMessage('Произошла ошибка при отправке кода. Попробуйте еще раз.', 'error');
     }
   };
 
@@ -120,10 +129,18 @@ const Registration: React.FC = () => {
       return;
     }
     
-    if (testDB.codes[phone] === code) {
+    // Проверяем код через сервис верификации
+    const result = verificationService.verifyCode(phone, code);
+    
+    if (result.success) {
       // Код правильный
       setIsCodeCorrect(true);
-      showFormMessage('Код подтвержден!', 'success');
+      showFormMessage(result.message, 'success');
+      
+      // Регистрируем пользователя с временным паролем
+      const tempPassword = 'Temp' + Math.random().toString(36).substring(2, 8) + '!';
+      registerUser(phone, tempPassword, testDB);
+      
       setTimeout(() => {
         setCurrentStep('details');
         // Сбрасываем состояние кода при переходе к следующему шагу
@@ -132,7 +149,7 @@ const Registration: React.FC = () => {
     } else {
       // Код неправильный
       setIsCodeCorrect(false);
-      showFormMessage('Код неверный. Проверьте правильность ввода', 'error');
+      showFormMessage(result.message, 'error');
       setCodeInputs(['', '', '', '']);
       // Сбрасываем состояние через 2 секунды
       setTimeout(() => {
@@ -202,27 +219,40 @@ const Registration: React.FC = () => {
     }, 1000);
   };
 
-  const handleResendCode = () => {
+  const handleResendCode = async () => {
     if (countdown > 0) return;
     
-    // Генерируем новый код
-    const newCode = Math.floor(1000 + Math.random() * 9000).toString();
-    testDB.codes[phone] = newCode;
-    
-    // Логируем новый код
-    console.log('');
-    console.log('==================================================');
-    console.log('                ПОВТОРНАЯ ОТПРАВКА КОДА');
-    console.log('==================================================');
-    console.log('');
-    console.log('📱 Номер телефона: ' + phone);
-    console.log('🔑 Новый код для ввода: ' + newCode);
-    console.log('');
-    console.log('✅ Код повторно отправлен на номер ' + phone);
-    console.log('');
-    
-    showFormMessage('Код был повторно отправлен на ваш номер телефона', 'success');
-    setCountdown(30);
+    try {
+      // Показываем сообщение о загрузке
+      showFormMessage('Повторно отправляем код...', 'info');
+      
+      // Отправляем новый код через сервис верификации
+      const result = await verificationService.sendCode({ phone });
+      
+      if (result.success) {
+        showFormMessage('Код был повторно отправлен на ваш номер телефона', 'success');
+        setCountdown(30);
+        
+        // Логируем новый код в консоль для тестирования
+        if (result.code) {
+          console.log('');
+          console.log('==================================================');
+          console.log('                ПОВТОРНАЯ ОТПРАВКА КОДА');
+          console.log('==================================================');
+          console.log('');
+          console.log('📱 Номер телефона: ' + phone);
+          console.log('🔑 Новый код для ввода: ' + result.code);
+          console.log('');
+          console.log('✅ Код повторно отправлен на номер ' + phone);
+          console.log('');
+        }
+      } else {
+        showFormMessage(result.message, 'error');
+      }
+    } catch (error) {
+      console.error('Ошибка повторной отправки кода:', error);
+      showFormMessage('Произошла ошибка при повторной отправке кода. Попробуйте еще раз.', 'error');
+    }
   };
 
   const handleChangePhone = () => {
