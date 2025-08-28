@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from './Header';
 import Footer from './Footer';
@@ -8,10 +8,12 @@ import FormMessage from './FormMessage';
 import PasswordToggle from './PasswordToggle';
 import { getGlobalTestDB, logTestData, verifyUserPassword } from '../data/testData';
 import { usePasswordToggle } from '../hooks/usePasswordToggle';
+import '../css/login.css';
 
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showTransition, setShowTransition] = useState(false);
@@ -20,23 +22,19 @@ const Login: React.FC = () => {
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info');
   const [showMessage, setShowMessage] = useState(false);
 
-  // Получаем глобальную базу данных
   const testDB = getGlobalTestDB();
 
-  // Логируем доступные данные в консоль при загрузке
   React.useEffect(() => {
     logTestData('ТЕСТОВЫЕ ДАННЫЕ ДЛЯ ВХОДА');
-  }, []);
+    console.log('🔍 DEBUG Login: current location =', location);
+    console.log('🔍 DEBUG Login: pathname =', location.pathname);
+  }, [location]);
 
   const showFormMessage = (text: string, type: 'success' | 'error' | 'info') => {
     setMessage(text);
     setMessageType(type);
     setShowMessage(true);
     
-    // Убираем автоматическое скрытие - сообщение остается до следующего ввода
-    // setTimeout(() => {
-    //   setShowMessage(false);
-    // }, 5000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,7 +45,6 @@ const Login: React.FC = () => {
       return;
     }
 
-    // Проверяем формат номера телефона (любая страна с кодом +XXX и длиной 10-15 цифр)
     const phoneRegex = /^\+\d{1,4}\d{7,14}$/;
     if (!phoneRegex.test(phone)) {
       showFormMessage('Введите корректный номер телефона в международном формате (например: +380XXXXXXXXX, +998XXXXXXXXX, +1XXXXXXXXXX)', 'error');
@@ -59,16 +56,26 @@ const Login: React.FC = () => {
       return;
     }
 
-    // Проверяем пользователя в базе данных
     if (verifyUserPassword(phone, password, testDB)) {
+      // Сохраняем данные пользователя в localStorage
+      const userData = testDB.users[phone];
+      if (userData) {
+        localStorage.setItem('currentUser', JSON.stringify({
+          id: userData.id,
+          phone: userData.phone,
+          firstName: userData.firstName || 'Пользователь',
+          lastName: userData.lastName || ''
+        }));
+      }
+      
       showFormMessage('Вход выполнен успешно!', 'success');
       
-      // Симуляция входа
       setShowTransition(true);
       
       setTimeout(() => {
         setShowTransition(false);
-        navigate('/dashboard');
+        console.log('🔍 DEBUG Login: Navigating to /homepage');
+        navigate('/homepage');
       }, 1000);
     } else {
       showFormMessage('Неверный номер телефона или пароль', 'error');
@@ -113,6 +120,19 @@ const Login: React.FC = () => {
                   placeholder=" " 
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  onFocus={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (!target.value) {
+                      target.value = "+";
+                      setPhone("+");
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (e.key === 'Backspace' && target.value === '+') {
+                      e.preventDefault();
+                    }
+                  }}
                   required 
                 />
                 <label htmlFor="phone" className="form__label">Номер телефона</label>
@@ -125,6 +145,19 @@ const Login: React.FC = () => {
                   placeholder=" " 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (!target.value) {
+                      target.value = "+";
+                      setPassword("+");
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (e.key === 'Backspace' && target.value === '+') {
+                      e.preventDefault();
+                    }
+                  }}
                   required 
                 />
                 <label htmlFor="password" className="form__label">Пароль</label>
@@ -143,7 +176,10 @@ const Login: React.FC = () => {
               <p className="form-container__text">Забыли пароль?</p>
               <button 
                 className="form__button form-container__button"
-                onClick={() => navigate('/forgot-password')}
+                onClick={() => {
+                  console.log('🔍 DEBUG Login: Navigating to /forgot-password');
+                  navigate('/forgot-password');
+                }}
               >
                 Восстановить пароль
               </button>

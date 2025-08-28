@@ -181,20 +181,7 @@
     }
 }
 
-/* ===== ТЕМНАЯ ТЕМА (если поддерживается) ===== */
-@media (prefers-color-scheme: dark) {
-    /* ===== ФОРМЫ ===== */
-    .form-container {
-        background-color: var(--color-dark, #152736);
-        color: var(--color-white, #ffffff);
-    }
-    
-    .form__input {
-        background-color: var(--color-dark, #152736);
-        color: var(--color-white, #ffffff);
-        border-color: var(--color-border, #2a3f54);
-    }
-}
+
 
 /* ===== УВЕЛИЧЕНИЕ ТЕКСТА (доступность) ===== */
 @media (prefers-reduced-motion: no-preference) {

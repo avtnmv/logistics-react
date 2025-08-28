@@ -1,11 +1,29 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from './Header';
 import Footer from './Footer';
+import '../css/login.css';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Добавляем логирование для отладки
+  console.log('🔍 DEBUG Dashboard: current location =', location);
+  console.log('🔍 DEBUG Dashboard: pathname =', location.pathname);
+  console.log('🔍 DEBUG Dashboard: search =', location.search);
+  console.log('🔍 DEBUG Dashboard: hash =', location.hash);
+
+  // Автоматически перенаправляем на homepage
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('🔍 DEBUG Dashboard: Redirecting to /homepage');
+      navigate('/homepage');
+    }, 1000); // Задержка в 1 секунду для показа анимации
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <>
@@ -31,7 +49,10 @@ const Dashboard: React.FC = () => {
             <div className="form-container__footer">
               <button 
                 className="form__button form-container__button"
-                onClick={() => navigate('/')}
+                onClick={() => {
+                  console.log('🔍 DEBUG: Navigating to /');
+                  navigate('/');
+                }}
               >
                 Выйти из системы
               </button>

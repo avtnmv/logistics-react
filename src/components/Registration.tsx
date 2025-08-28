@@ -8,6 +8,7 @@ import PasswordToggle from './PasswordToggle';
 import { getGlobalTestDB, logTestData, isUserRegistered, registerUser, saveUsersToStorage } from '../data/testData';
 import { usePasswordToggle } from '../hooks/usePasswordToggle';
 import { verificationService } from '../services/verificationService';
+import '../css/login.css';
 
 const Registration: React.FC = () => {
   const navigate = useNavigate();
@@ -24,19 +25,15 @@ const Registration: React.FC = () => {
   const [isCodeCorrect, setIsCodeCorrect] = useState<boolean | null>(null);
   const [countdown, setCountdown] = useState(0);
 
-  // Хуки для переключения видимости паролей
   const passwordToggle = usePasswordToggle();
   const confirmPasswordToggle = usePasswordToggle();
 
-  // Получаем глобальную базу данных
   const testDB = getGlobalTestDB();
 
-  // Логируем доступные данные в консоль при загрузке
   React.useEffect(() => {
     logTestData('ТЕСТОВЫЕ ДАННЫЕ ДЛЯ РЕГИСТРАЦИИ');
   }, []);
 
-  // Обратный отсчет
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (countdown > 0) {
@@ -55,24 +52,20 @@ const Registration: React.FC = () => {
       return;
     }
 
-    // Проверяем формат номера телефона (любая страна с кодом +XXX и длиной 10-15 цифр)
     const phoneRegex = /^\+\d{1,4}\d{7,14}$/;
     if (!phoneRegex.test(phone)) {
       showFormMessage('Введите корректный номер телефона в международном формате (например: +380XXXXXXXXX, +998XXXXXXXXX, +1XXXXXXXXXX)', 'error');
       return;
     }
 
-    // Проверяем, не зарегистрирован ли уже пользователь
     if (isUserRegistered(phone, testDB)) {
       showFormMessage('Пользователь с этим номером уже зарегистрирован', 'info');
       return;
     }
 
     try {
-      // Показываем сообщение о загрузке
       showFormMessage('Отправляем код...', 'info');
       
-      // Отправляем код через сервис верификации
       const result = await verificationService.sendCode({ phone });
       
       if (result.success) {
@@ -80,7 +73,6 @@ const Registration: React.FC = () => {
         setCurrentStep('code');
         setCountdown(30);
         
-        // Логируем код в консоль для тестирования
         if (result.code) {
           console.log('');
           console.log('==================================================');
@@ -105,7 +97,6 @@ const Registration: React.FC = () => {
     setMessageType(type);
     setShowMessage(true);
     
-    // Убираем автоматическое скрытие - сообщение остается до следующего ввода
     // const duration = text.includes('Код отправлен') ? 25000 : 5000;
     // setTimeout(() => {
     //   setShowMessage(false);
@@ -117,41 +108,33 @@ const Registration: React.FC = () => {
     
     const code = codeInputs.join('');
     
-    // Проверяем, что код введен полностью
     if (code.length !== 4) {
       showFormMessage('Введите полный 4-значный код', 'error');
       return;
     }
     
-    // Проверяем, что код состоит только из цифр
     if (!/^\d{4}$/.test(code)) {
       showFormMessage('Код должен состоять только из цифр', 'error');
       return;
     }
     
-    // Проверяем код через сервис верификации
     const result = verificationService.verifyCode(phone, code);
     
     if (result.success) {
-      // Код правильный
       setIsCodeCorrect(true);
       showFormMessage(result.message, 'success');
       
-      // Регистрируем пользователя с временным паролем
       const tempPassword = 'Temp' + Math.random().toString(36).substring(2, 8) + '!';
       registerUser(phone, tempPassword, testDB);
       
       setTimeout(() => {
         setCurrentStep('details');
-        // Сбрасываем состояние кода при переходе к следующему шагу
         setIsCodeCorrect(null);
       }, 1000);
     } else {
-      // Код неправильный
       setIsCodeCorrect(false);
       showFormMessage(result.message, 'error');
       setCodeInputs(['', '', '', '']);
-      // Сбрасываем состояние через 2 секунды
       setTimeout(() => {
         setIsCodeCorrect(null);
       }, 2000);
@@ -161,7 +144,6 @@ const Registration: React.FC = () => {
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Проверяем, что все поля заполнены
     if (!firstName.trim()) {
       showFormMessage('Введите имя', 'error');
       return;
@@ -182,7 +164,6 @@ const Registration: React.FC = () => {
       return;
     }
     
-    // Валидация пароля
     if (password.length < 6) {
       showFormMessage('Пароль должен содержать минимум 6 символов', 'error');
       return;
@@ -203,17 +184,25 @@ const Registration: React.FC = () => {
       return;
     }
     
-    // Обновляем пароль и добавляем имя/фамилию пользователя
     testDB.users[phone].password = password;
     testDB.users[phone].firstName = firstName;
     testDB.users[phone].lastName = lastName;
     
-    // Сохраняем обновленные данные в localStorage
     saveUsersToStorage(testDB.users);
+    
+    // Сохраняем данные пользователя в localStorage для текущей сессии
+    const newUser = testDB.users[phone];
+    if (newUser) {
+      localStorage.setItem('currentUser', JSON.stringify({
+        id: newUser.id,
+        phone: phone,
+        firstName: firstName,
+        lastName: lastName
+      }));
+    }
     
     showFormMessage('Данные сохранены!', 'success');
     
-    // Переходим к экрану успешной регистрации через 1 секунду
     setTimeout(() => {
       setCurrentStep('success');
     }, 1000);
@@ -223,17 +212,14 @@ const Registration: React.FC = () => {
     if (countdown > 0) return;
     
     try {
-      // Показываем сообщение о загрузке
       showFormMessage('Повторно отправляем код...', 'info');
       
-      // Отправляем новый код через сервис верификации
       const result = await verificationService.sendCode({ phone });
       
       if (result.success) {
         showFormMessage('Код был повторно отправлен на ваш номер телефона', 'success');
         setCountdown(30);
         
-        // Логируем новый код в консоль для тестирования
         if (result.code) {
           console.log('');
           console.log('==================================================');
@@ -268,7 +254,6 @@ const Registration: React.FC = () => {
     newInputs[index] = value;
     setCodeInputs(newInputs);
     
-    // Автоматический переход к следующему полю
     if (value && index < 3) {
       const nextInput = document.querySelector(`input[data-index="${index + 1}"]`) as HTMLInputElement;
       if (nextInput) nextInput.focus();
@@ -276,35 +261,26 @@ const Registration: React.FC = () => {
   };
 
   const handleCodeKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Если нажат Backspace и поле пустое, переходим к предыдущему полю
     if (e.key === 'Backspace' && codeInputs[index] === '' && index > 0) {
       const prevInput = document.querySelector(`input[data-index="${index - 1}"]`) as HTMLInputElement;
       if (prevInput) {
         prevInput.focus();
-        // Очищаем предыдущее поле
         const newInputs = [...codeInputs];
         newInputs[index - 1] = '';
         setCodeInputs(newInputs);
       }
     }
     
-    // Если зажат Backspace и поле не пустое, очищаем все поля
     if (e.key === 'Backspace' && codeInputs[index] !== '') {
-      // Проверяем, зажат ли Backspace (событие повторяется)
       if (e.repeat) {
-        // Очищаем все поля
         setCodeInputs(['', '', '', '']);
-        // Фокусируемся на первом поле
         const firstInput = document.querySelector(`input[data-index="0"]`) as HTMLInputElement;
         if (firstInput) firstInput.focus();
-        // Предотвращаем стандартное поведение
         e.preventDefault();
       }
     }
     
-    // Если нажат Backspace в первом поле и оно пустое, очищаем все поля
     if (e.key === 'Backspace' && index === 0 && codeInputs[index] === '') {
-      // Очищаем все поля
       setCodeInputs(['', '', '', '']);
       e.preventDefault();
     }
@@ -327,7 +303,6 @@ const Registration: React.FC = () => {
       <main className="main container">
         <div className="main__container">
           <AnimatePresence mode="wait">
-            {/* Шаг 1: Ввод номера телефона */}
             {currentStep === 'phone' && (
               <motion.div 
                 key="phone"
@@ -385,7 +360,6 @@ const Registration: React.FC = () => {
               </motion.div>
             )}
 
-            {/* Шаг 2: Ввод кода */}
             {currentStep === 'code' && (
               <motion.div 
                 key="code"

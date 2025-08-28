@@ -9,7 +9,7 @@
 
 :root {
     /* Размеры */
-    --container-width: 1216px;
+    --container-width: 1290px;
     --border-radius-sm: 5px;
     --border-radius-md: 8px;
     
@@ -18,25 +18,20 @@
     --color-primary: #4472B8;
     --color-light-blue: #EEF4F7;
     --color-gray: #717680;
-    --color-gray-dark: #535862;
-    --color-orange: #FE6824;
     --color-light-orange: #FFF3E5;
     --color-light-green: #EDFFC6;
-    --color-green: #72AA0C;
-    --color-light-yellow: #FCF9D2;
     --color-brown: #9B721B;
     --color-white: #FFFFFF;
-    --color-dark: #152736;
     --color-black: #000000;
-    --color-gray-dark: #4A4A4A;
     --color-transparent: transparent;
-    --color-border: #D5D7DA;
+
     --color-black: #181D27;
+    --color-dark-gray: #535862;
 }
 
 .form__input{
     border-radius: var(--border-radius-md);
-    border: 1px solid var(--color-border);
+    border: 1px solid #D5D7DA;
     padding-left: 14px;
     height: 42px;
     max-width: 384px;
@@ -79,7 +74,7 @@
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: #152736;
+  background: var(--color-primary);
   z-index: 9999;
   transform: translateX(-100%);
   display: flex;
@@ -98,7 +93,7 @@
 .code-input {
   width: 60px;
   height: 60px;
-  border: 2px solid var(--color-border);
+  border: 2px solid #D5D7DA;
   border-radius: var(--border-radius-md);
   text-align: center;
   font-size: 24px;

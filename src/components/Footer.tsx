@@ -12,9 +12,9 @@ const Footer: React.FC = () => {
             </Link>
 
             <ul className="footer__list">
-              <li className="footer__item"><a href="#" className="footer__link">Name Company</a></li>
-              <li className="footer__item"><a href="#" className="footer__link">Adress Company</a></li>
-              <li className="footer__item"><a href="#" className="footer__link">City Company</a></li>
+              <li className="footer__item"><span className="footer__link">Name Company</span></li>
+              <li className="footer__item"><span className="footer__link">Adress Company</span></li>
+              <li className="footer__item"><span className="footer__link">City Company</span></li>
             </ul>
           </div>
 

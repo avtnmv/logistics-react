@@ -7,6 +7,7 @@ import FormMessage from './FormMessage';
 import PasswordToggle from './PasswordToggle';
 import { getGlobalTestDB, logTestData, isUserRegistered, updateUserPassword } from '../data/testData';
 import { usePasswordToggle } from '../hooks/usePasswordToggle';
+import '../css/login.css';
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
